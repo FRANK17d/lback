@@ -3,12 +3,23 @@ import dbConfig from "../config/db.config.js";
 import userModel from "./user.model.js";
 import roleModel from "./role.model.js";
 
-const sequelize = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
-    host: dbConfig.HOST,
-    dialect: dbConfig.dialect,
-    port: dbConfig.PORT,
-    pool: dbConfig.pool,
-});
+const sequelize = process.env.DATABASE_URL
+    ? new Sequelize(process.env.DATABASE_URL, {
+        dialect: "postgres",
+        dialectOptions: {
+            ssl: { require: true, rejectUnauthorized: false },
+        },
+        pool: dbConfig.pool,
+        logging: false,
+    })
+    : new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
+        host: dbConfig.HOST,
+        dialect: dbConfig.dialect,
+        port: dbConfig.PORT,
+        dialectOptions: dbConfig.dialectOptions,
+        pool: dbConfig.pool,
+        logging: false,
+    });
 const db = {};
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;

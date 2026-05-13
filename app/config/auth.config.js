@@ -1,3 +1,3 @@
 export default {
-    secret: "secret-key",
+    secret: process.env.JWT_SECRET || "secret-key",
 };
